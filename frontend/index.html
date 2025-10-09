@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAA Route Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>FAA Route Finder</h1>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>Find Available Routes</h2>
+            <div class="input-group">
+                <div class="input-item">
+                    <label for="origin">Origin Airport</label>
+                    <input type="text" id="origin" placeholder="e.g., JFK" class="uppercase-input">
+                </div>
+                <div class="input-item">
+                    <label for="destination">Destination Airport</label>
+                    <input type="text" id="destination" placeholder="e.g., MIA" class="uppercase-input">
+                </div>
+                <button id="find-routes-btn">Find Routes</button>
+            </div>
+        </section>
+
+        <section id="routes-results-area" class="card results-area">
+            <p class="placeholder">Route results will appear here...</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> FAA Route Finder</p>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>

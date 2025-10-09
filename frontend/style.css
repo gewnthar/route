@@ -1,0 +1,158 @@
+:root {
+    --aviation-bg-dark: #0d1117;
+    --aviation-panel-dark: #161b22;
+    --aviation-border: #30363d;
+    --aviation-text-primary: #c9d1d9;
+    --aviation-text-secondary: #8b949e;
+    --aviation-blue-accent: #388bfd;
+    --aviation-blue-hover: #58a6ff;
+    --aviation-yellow-accent: #FFD700;
+    --aviation-red-accent: #f85149;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    background-color: var(--aviation-bg-dark);
+    color: var(--aviation-text-primary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+header, footer {
+    background-color: var(--aviation-panel-dark);
+    text-align: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--aviation-border);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: var(--aviation-blue-accent);
+}
+
+footer {
+    margin-top: 2rem;
+    border-top: 1px solid var(--aviation-border);
+    border-bottom: none;
+    font-size: 0.8rem;
+    color: var(--aviation-text-secondary);
+}
+
+main {
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: var(--aviation-panel-dark);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--aviation-border);
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    margin-top: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--aviation-border);
+    color: var(--aviation-text-primary);
+}
+
+.input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.input-item {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--aviation-text-secondary);
+}
+
+input[type="text"] {
+    padding: 0.75rem;
+    background-color: var(--aviation-bg-dark);
+    border: 1px solid var(--aviation-border);
+    color: var(--aviation-text-primary);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--aviation-blue-accent);
+    box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.4);
+}
+
+.uppercase-input {
+    text-transform: uppercase;
+}
+
+button {
+    background-color: var(--aviation-blue-accent);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--aviation-blue-hover);
+}
+
+.results-area {
+    min-height: 100px;
+}
+
+.placeholder {
+    color: var(--aviation-text-secondary);
+}
+
+.results-area h3 {
+    color: var(--aviation-yellow-accent);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.results-area table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.results-area th, .results-area td {
+    border: 1px solid var(--aviation-border);
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.results-area th {
+    background-color: #010409;
+    font-weight: 600;
+}
+
+.results-area tr:nth-child(even) {
+    background-color: #1c2128;
+}
+
+.error-message {
+    color: var(--aviation-red-accent);
+}
+
+.loading-message {
+    color: var(--aviation-yellow-accent);
+}
