@@ -1,7 +1,14 @@
-Zig build artifacts
+# Zig build artifacts
 zig-out/
-zig-cache/
-zig-cache-global/
+.zig-cache/
+.zig-cache-*/
 
-Environment file with secrets
+# Downloads / data
+data/*.csv
+
+# Editor/OS junk
+.DS_Store
+*.swp
+
+# Don’t ever commit secrets
 .env
