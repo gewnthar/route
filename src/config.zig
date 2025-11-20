@@ -10,8 +10,14 @@ pub const Config = struct {
 };
 
 pub fn load(allocator: std.mem.Allocator, path: []const u8) !Config {
+    // Open the file
     const file = try std.fs.cwd().openFile(path, .{});
     defer file.close();
+
+    // Fix: Read the whole file at once (Max 10KB)
+    // This avoids the Zig 0.16 "writergate/readergate" stream API complexity
+    const content = try file.readToEndAlloc(allocator, 1024 * 10);
+    defer allocator.free(content);
 
     // Default values
     var config = Config{
@@ -23,11 +29,10 @@ pub fn load(allocator: std.mem.Allocator, path: []const u8) !Config {
         .db_name = "faa_dst_db",
     };
 
-    // Direct file reader (Fixes Zig 0.15+ I/O issue)
-    var reader = file.reader();
-    var line_buf: [1024]u8 = undefined;
+    // Iterator over lines
+    var lines = std.mem.splitScalar(u8, content, '\n');
 
-    while (try reader.readUntilDelimiterOrEof(&line_buf, '\n')) |line| {
+    while (lines.next()) |line| {
         if (line.len == 0 or line[0] == '#') continue;
         
         if (std.mem.indexOfScalar(u8, line, '=')) |sep_index| {
