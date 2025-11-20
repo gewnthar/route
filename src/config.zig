@@ -10,13 +10,8 @@ pub const Config = struct {
 };
 
 pub fn load(allocator: std.mem.Allocator, path: []const u8) !Config {
-    // Open the file
-    const file = try std.fs.cwd().openFile(path, .{});
-    defer file.close();
-
-    // Fix: Read the whole file at once (Max 10KB)
-    // This avoids the Zig 0.16 "writergate/readergate" stream API complexity
-    const content = try file.readToEndAlloc(allocator, 1024 * 10);
+    // FIX: Zig 0.16 arguments: (path, allocator, limit_enum)
+    const content = try std.fs.cwd().readFileAlloc(path, allocator, @enumFromInt(1024 * 10));
     defer allocator.free(content);
 
     // Default values
@@ -29,7 +24,6 @@ pub fn load(allocator: std.mem.Allocator, path: []const u8) !Config {
         .db_name = "faa_dst_db",
     };
 
-    // Iterator over lines
     var lines = std.mem.splitScalar(u8, content, '\n');
 
     while (lines.next()) |line| {

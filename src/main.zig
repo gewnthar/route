@@ -1,23 +1,41 @@
 const std = @import("std");
+const net = std.net;
+const http = std.http;
 const config_mod = @import("config.zig");
-const database_mod = @import("database.zig");
-const server_mod = @import("server.zig");
-const handlers_mod = @import("handlers.zig");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-    
+
+    // Keep config loading so we know .env parsing works for 0.16
     const config = try config_mod.load(allocator, ".env");
-    std.log.info("Booting... DB User: {s}", .{config.db_user});
+    
+    const address = try net.Address.parseIp4("127.0.0.1", config.server_port);
+    var server = try http.Server.init(allocator, .{ .reuse_address = true });
+    defer server.deinit();
 
-    var db = try database_mod.DB.init(allocator, config);
-    defer db.deinit();
+    std.log.info("Routes App (Holding Pattern) listening on {d}...", .{config.server_port});
+    try server.listen(address);
 
-    const ctx = handlers_mod.Context{ 
-        .db = &db, 
-        .backing_allocator = allocator 
-    };
+    while (true) {
+        var res = try server.accept(.{ .allocator = allocator });
+        try handleRequest(&res);
+    }
+}
 
-    try server_mod.start(allocator, config.server_port, ctx);
+fn handleRequest(res: *http.Server.Response) !void {
+    try res.wait();
+    // Just a simple health check for now
+    if (std.mem.eql(u8, res.request.head.target, "/api/health")) {
+        res.status = .ok;
+        res.transfer_encoding = .chunked;
+        try res.headers.append("Content-Type", "application/json");
+        try res.do();
+        try res.writeAll("{\"status\": \"waiting_for_zig_0.16\"}");
+        try res.finish();
+    } else {
+        res.status = .not_found;
+        try res.do();
+        try res.finish();
+    }
 }
