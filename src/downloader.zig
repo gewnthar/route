@@ -1,26 +1,3 @@
-// SPDX-License-Identifier: MIT
-// File: src/downloader.zig
-//
-// FAA Route Finder — FAA CSV downloader.
-//
-// - Creates ./data if missing.
-// - Streams two public CSVs to disk:
-//     prefroutes_db.csv  (NFDC Preferred Routes)
-//     codedswap_db.csv   (CDM Operational CDRs)
-// - Uses std.http.Client.fetch (Zig 0.15.1) and streams to file.
-// - Returns a small JSON string with byte counts.
-//
-// Files:
-//   data/prefroutes_db.csv
-//   data/codedswap_db.csv
-//
-// Errors:
-//   error.UnexpectedStatus if HTTP status != 200 OK
-//
-// See also:
-//   src/handlers.zig (handleRefresh)
-
-
 const std = @import("std");
 
 pub fn refreshData(allocator: std.mem.Allocator) ![]u8 {
@@ -36,7 +13,7 @@ pub fn refreshData(allocator: std.mem.Allocator) ![]u8 {
     const cdr_bytes  = try downloadToFile(allocator, CDR_URL,  cdr_path);
 
     return try std.fmt.allocPrint(allocator,
-        "{{\"prefroutes_bytes\":{d},\"cdr_bytes\":{d}}}\n",
+        "{{\"prefroutes_bytes\":{d},\"cdr_bytes\":{d}}}",
         .{ pref_bytes, cdr_bytes }
     );
 }
@@ -49,7 +26,8 @@ fn ensureDataDir() !void {
 }
 
 pub fn downloadToFile(allocator: std.mem.Allocator, url: []const u8, out_path: []const u8) !usize {
-    var argv = [_][]const u8{
+    // Uses system curl to avoid Zig http dependency issues
+    const argv = [_][]const u8{
         "curl", "-fLsS", "-o", out_path, url,
     };
 
@@ -58,16 +36,14 @@ pub fn downloadToFile(allocator: std.mem.Allocator, url: []const u8, out_path: [
     child.stdout_behavior = .Inherit;
     child.stderr_behavior = .Inherit;
 
-    // Ensure ./data exists (caller already does ensureDataDir(), but harmless)
-    std.fs.cwd().makeDir(std.fs.path.dirname(out_path) orelse ".") catch {};
-
     const term = try child.spawnAndWait();
     switch (term) {
         .Exited => |code| if (code != 0) return error.UnexpectedStatus,
         else => return error.UnexpectedStatus,
     }
 
-    // Return the number of bytes written
-    const st = try std.fs.cwd().statFile(out_path);
+    const file = try std.fs.cwd().openFile(out_path, .{});
+    defer file.close();
+    const st = try file.stat();
     return @as(usize, @intCast(st.size));
 }
