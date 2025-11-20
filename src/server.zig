@@ -9,7 +9,7 @@ pub fn start(allocator: std.mem.Allocator, port: u16, ctx: handlers.Context) !vo
     var server = try http.Server.init(allocator, .{ .reuse_address = true });
     defer server.deinit();
 
-    std.log.info("Server listening on 127.0.0.1:{d}", .{port});
+    std.log.info("Server listening on 127.0.0.1:{d} (Parked Mode)", .{port});
     try server.listen(address);
 
     while (true) {
