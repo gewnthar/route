@@ -1,5 +1,3 @@
-// No imports needed here, just pure data structures
-
 pub const RouteRequest = struct {
     origin: []const u8,
     destination: []const u8,
